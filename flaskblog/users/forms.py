@@ -61,9 +61,3 @@ class UpdateAccountForm(FlaskForm):
             email = User.query.filter_by(email=email.data).first()
             if email:
                 raise ValidationError("That email is taken.")
-
-
-class PostForm(FlaskForm):
-    title = StringField("Title", validators=[DataRequired()])
-    content = TextAreaField("Content", validators=[DataRequired()])
-    submit = SubmitField("Post")

@@ -7,7 +7,7 @@ from flaskblog.users.forms import (
     LoginForm,
     UpdateAccountForm,
 )
-from flaskblog.users.utils import save_picture, send_reset_email
+from flaskblog.users.utils import save_picture
 
 users = Blueprint("users", __name__)
 
@@ -15,7 +15,7 @@ users = Blueprint("users", __name__)
 @users.route("/register", methods=["GET", "POST"])
 def register():
     if current_user.is_authenticated:
-        return redirect(url_for("home"))
+        return redirect(url_for("main.home"))
 
     form = RegistrationForm()
     if form.validate_on_submit():
@@ -28,7 +28,7 @@ def register():
         db.session.add(user)
         db.session.commit()
         flash("Your account has been created, you are now able to log in", "success")
-        return redirect(url_for("login"))
+        return redirect(url_for("users.login"))
 
     return render_template("register.html", title="Register", form=form)
 
@@ -36,7 +36,7 @@ def register():
 @users.route("/login", methods=["GET", "POST"])
 def login():
     if current_user.is_authenticated:
-        return redirect(url_for("home"))
+        return redirect(url_for("main.home"))
 
     form = LoginForm()
     if form.validate_on_submit():
@@ -47,7 +47,7 @@ def login():
             if next_page:
                 return redirect(next_page)
             else:
-                return redirect(url_for("home"))
+                return redirect(url_for("main.home"))
         else:
             flash(f"Login unsuccessful. Please check your email and password", "danger")
     return render_template("login.html", title="Login", form=form)
@@ -56,7 +56,7 @@ def login():
 @users.route("/logout")
 def logout():
     logout_user()
-    return redirect(url_for("home"))
+    return redirect(url_for("main.home"))
 
 
 @users.route("/account", methods=["GET", "POST"])
@@ -72,7 +72,7 @@ def account():
         current_user.email = form.email.data
         db.session.commit()
         flash("Your account has been updated", "success")
-        return redirect(url_for("account"))
+        return redirect(url_for("users.account"))
 
     elif request.method == "GET":
         form.username.data = current_user.username
